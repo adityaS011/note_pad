@@ -1,7 +1,6 @@
-// components/Sidebar.tsx
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { useRouter } from 'next/navigation';
 import { Lists, useLists } from '@/contexts/ListContext';
@@ -10,6 +9,9 @@ const Sidebar = () => {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { lists, selectedList, selectList, fetchLists } = useLists();
   const router = useRouter();
+
+  // Track screen size for collapsing the sidebar
+  const [isMobile, setIsMobile] = useState(false);
 
   const handleNavigation = (list: Lists) => {
     if (!list) return;
@@ -21,14 +23,36 @@ const Sidebar = () => {
     router.push(`/dashboard/?id=${list.id}`);
     selectList(list);
   };
+
   useEffect(() => {
     fetchLists();
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [lists]);
+
+  useEffect(() => {
+    if (isMobile) {
+      toggleSidebar();
+    } else {
+      toggleSidebar();
+    }
+  }, [isMobile, toggleSidebar]);
+
   return (
     <div
       className={`transition-transform transform ${
         isCollapsed ? '-translate-x-full' : 'translate-x-0'
-      } fixed  z-10 w-64 bg-[#F1F2F7] h-full border `}
+      } fixed z-10 w-64 bg-[#F1F2F7] h-full border md:translate-x-0`}
     >
       <div className='flex justify-between items-center h-14 px-4 border-b border-[#C8CBD9]'>
         <h2 className='font-bold text-lg'>Notes</h2>

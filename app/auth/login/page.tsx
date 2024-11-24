@@ -27,8 +27,8 @@ const LoginPage = () => {
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center bg-white'>
-      <div className='bg-white p-8 rounded-lg shadow-2xl w-96 border-2'>
-        <h1 className='text-3xl text-gray-800 font-extrabold mb-6 text-center'>
+      <div className='bg-white p-4 md:p-8 rounded-lg shadow-2xl w-full mx-12 md:w-96 border-2'>
+        <h1 className='text-xl md:text-3xl text-gray-800 font-extrabold mb-6 text-center'>
           Let's get you signed in
         </h1>
         <p className='text-gray-500 text-center mb-6'>No Need to Sign Up</p>
