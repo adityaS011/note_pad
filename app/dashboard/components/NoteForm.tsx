@@ -32,7 +32,7 @@ const NoteForm = ({
         <div
           contentEditable
           onBlur={handleDescriptionChange}
-          className='border bg-gray-50 px-3 py-2 rounded md:min-h-[600px] max-h-[calc(100vh-160px)] overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-50'
+          className='border bg-gray-50 px-3 py-2 rounded md:min-h-[600px] h-[500px] overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-50'
           dangerouslySetInnerHTML={{ __html: currentList.description }}
         ></div>
       </div>

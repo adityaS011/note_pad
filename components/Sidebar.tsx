@@ -28,7 +28,7 @@ const Sidebar = () => {
     <div
       className={`transition-transform transform ${
         isCollapsed ? '-translate-x-full' : 'translate-x-0'
-      } fixed  z-10 w-64 bg-[#F1F2F7] h-full border `}
+      } fixed  z-10 w-screen md:w-64 bg-[#F1F2F7] h-full border `}
     >
       <div className='flex justify-between items-center h-14 px-4 border-b border-[#C8CBD9]'>
         <h2 className='font-bold text-lg'>Notes</h2>
