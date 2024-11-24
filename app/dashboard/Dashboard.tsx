@@ -136,7 +136,7 @@ const Dashboard = () => {
             {!textEditable ? (
               <div className='flex justify-center items-center gap-2 w-full cursor-pointer font-bold'>
                 <span className='text-2xl'>
-                  {selectedList?.title || 'Sample Title'}
+                  {selectedList?.title || 'Sample Title (new)'}
                 </span>
                 <span className='hidden group-hover:block'>✏️</span>
               </div>
