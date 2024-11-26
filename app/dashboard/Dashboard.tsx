@@ -41,7 +41,7 @@ const Dashboard = () => {
         data.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Lists[]
       );
     };
-
+    console.log(lists);
     fetchLists();
     return () => {
       setTextEditable(false);
@@ -49,15 +49,15 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log('here');
     const fetchListById = async () => {
       if (id) {
         setIsLoading(true);
         const docRef = doc(db, 'lists', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setSelectedList({ id, ...docSnap.data() } as Lists);
-          console.log(docSnap.data());
+          const data = docSnap.data();
+          setSelectedList({ id, ...data } as Lists);
+          console.log(data); // log the data here
         } else {
           setSelectedList({
             title: 'Sample Title',
@@ -75,35 +75,33 @@ const Dashboard = () => {
       }
     };
     fetchListById();
-    console.log(selectedList);
   }, [id]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedList({
-      ...selectedList,
+    setSelectedList((prevSelectedList) => ({
+      ...prevSelectedList,
       title: e.target.value,
-      id: `${Date.now()}`,
-    });
+    }));
   };
+
+  const handleUpdateList = async (updatedList: Lists) => {
+    setIsLoading(true);
+    const listDoc = doc(db, 'lists', updatedList.id);
+    await updateDoc(listDoc, {
+      title: updatedList.title,
+      description: updatedList.description,
+    });
+    setLists((prevLists) =>
+      prevLists.map((list) => (list.id === updatedList.id ? updatedList : list))
+    );
+    setIsLoading(false);
+  };
+
   const handleAddList = async (newList: Lists) => {
     if (!newList.title || !newList.description) return;
     setIsLoading(true);
     const docRef = await addDoc(listsCollectionRef, newList);
     setLists([...lists, { ...newList, id: docRef.id }]);
-    setIsLoading(false);
-  };
-
-  const handleUpdateList = async (updatedList: Lists) => {
-    console.log(updatedList);
-    setIsLoading(true);
-    const listDoc = doc(db, 'lists', `${Date.now()}`);
-    await updateDoc(listDoc, {
-      title: updatedList.title,
-      description: updatedList.description,
-    });
-    setLists(
-      lists.map((list) => (list.id === updatedList.id ? updatedList : list))
-    );
     setIsLoading(false);
   };
 
