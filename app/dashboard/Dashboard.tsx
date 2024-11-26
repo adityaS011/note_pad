@@ -16,18 +16,18 @@ import { MdMenu } from 'react-icons/md';
 import { useSidebar } from '@/contexts/SidebarContext';
 import NoteForm from './components/NoteForm';
 
-export type Lists = { id?: string; title: string; description: string };
+export type Lists = { id: string; title: string; description?: string };
 
 const Dashboard = () => {
   const [lists, setLists] = useState<Lists[]>([]);
-  const [selectedList, setSelectedList] = useState<Lists | null>(null);
+  const [selectedList, setSelectedList] = useState<Lists>({
+    title: 'Sample Title',
+    description: '',
+    id: `${Date.now()}`,
+  });
   const [isLoading, setIsLoading] = useState(false);
   const { toggleSidebar } = useSidebar();
   const [textEditable, setTextEditable] = useState(false);
-
-  const [currentList, setCurrentList] = useState<Lists>(
-    selectedList || { title: 'Sample Title', description: '' }
-  );
 
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
@@ -49,6 +49,7 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    console.log('here');
     const fetchListById = async () => {
       if (id) {
         setIsLoading(true);
@@ -56,33 +57,46 @@ const Dashboard = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setSelectedList({ id, ...docSnap.data() } as Lists);
+          console.log(docSnap.data());
         } else {
-          setSelectedList(null); // Handle invalid ID
+          setSelectedList({
+            title: 'Sample Title',
+            description: '',
+            id: `${Date.now()}`,
+          });
         }
         setIsLoading(false);
       } else {
-        setSelectedList(null);
+        setSelectedList({
+          title: 'Sample Title',
+          description: '',
+          id: `${Date.now()}`,
+        });
       }
     };
     fetchListById();
+    console.log(selectedList);
   }, [id]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentList({ ...currentList, title: e.target.value });
+    setSelectedList({
+      ...selectedList,
+      title: e.target.value,
+      id: `${Date.now()}`,
+    });
   };
   const handleAddList = async (newList: Lists) => {
     if (!newList.title || !newList.description) return;
     setIsLoading(true);
     const docRef = await addDoc(listsCollectionRef, newList);
     setLists([...lists, { ...newList, id: docRef.id }]);
-    setSelectedList(null);
     setIsLoading(false);
   };
 
   const handleUpdateList = async (updatedList: Lists) => {
-    if (!updatedList.id) return;
+    console.log(updatedList);
     setIsLoading(true);
-    const listDoc = doc(db, 'lists', updatedList.id);
+    const listDoc = doc(db, 'lists', `${Date.now()}`);
     await updateDoc(listDoc, {
       title: updatedList.title,
       description: updatedList.description,
@@ -99,7 +113,6 @@ const Dashboard = () => {
     const listDoc = doc(db, 'lists', selectedList.id);
     await deleteDoc(listDoc);
     setLists(lists.filter((list) => list.id !== selectedList.id));
-    setSelectedList(null);
     setIsLoading(false);
   };
 
@@ -143,7 +156,7 @@ const Dashboard = () => {
             ) : (
               <input
                 type='text'
-                value={selectedList?.title || 'Sample Title'}
+                value={selectedList?.title || ''}
                 onChange={handleTitleChange}
                 className='bg-slate-100 focus:outline-none w-full px-8 py-2'
               />
@@ -155,8 +168,8 @@ const Dashboard = () => {
         </div>
 
         <NoteForm
-          currentList={currentList}
-          setCurrentList={setCurrentList}
+          currentList={selectedList}
+          setCurrentList={setSelectedList}
           list={selectedList}
           onSave={selectedList ? handleUpdateList : handleAddList}
           onDelete={selectedList ? handleDeleteList : undefined}

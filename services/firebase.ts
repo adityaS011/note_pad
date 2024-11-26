@@ -3,13 +3,13 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCS_3GLi5mUQqqDJ-5pk0wUs1VPDhPoMSM',
-  authDomain: 'simplenotes-1e95f.firebaseapp.com',
-  projectId: 'simplenotes-1e95f',
-  storageBucket: 'simplenotes-1e95f.firebasestorage.app',
-  messagingSenderId: '415288091871',
-  appId: '1:415288091871:web:29510dcd78cdbe9b42756a',
-  measurementId: 'G-PNFN4VW52F',
+  apiKey: 'AIzaSyAw99hWJTRLcLK3N5jiDkPbL38KUL_fYA4',
+  authDomain: 'simplenotes2-be463.firebaseapp.com',
+  projectId: 'simplenotes2-be463',
+  storageBucket: 'simplenotes2-be463.firebasestorage.app',
+  messagingSenderId: '211549192768',
+  appId: '1:211549192768:web:f2ea924650966be818d5a5',
+  measurementId: 'G-CFYM44VRMT',
 };
 
 const app = initializeApp(firebaseConfig);
