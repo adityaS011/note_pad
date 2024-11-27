@@ -21,9 +21,9 @@ export type Lists = { id: string; title: string; description?: string };
 const Dashboard = () => {
   const [lists, setLists] = useState<Lists[]>([]);
   const [selectedList, setSelectedList] = useState<Lists>({
-    title: 'Sample Title',
+    title: '',
     description: '',
-    id: `${Date.now()}`,
+    id: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toggleSidebar } = useSidebar();
@@ -41,7 +41,6 @@ const Dashboard = () => {
         data.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Lists[]
       );
     };
-    console.log(lists);
     fetchLists();
     return () => {
       setTextEditable(false);
@@ -57,20 +56,19 @@ const Dashboard = () => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           setSelectedList({ id, ...data } as Lists);
-          console.log(data); // log the data here
         } else {
           setSelectedList({
-            title: 'Sample Title',
+            title: '',
             description: '',
-            id: `${Date.now()}`,
+            id: '', // Ensure it's empty for new creation
           });
         }
         setIsLoading(false);
       } else {
         setSelectedList({
-          title: 'Sample Title',
+          title: '',
           description: '',
-          id: `${Date.now()}`,
+          id: '', // No id for a new list
         });
       }
     };
@@ -84,7 +82,15 @@ const Dashboard = () => {
     }));
   };
 
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedList((prevSelectedList) => ({
+      ...prevSelectedList,
+      description: e.target.value,
+    }));
+  };
+
   const handleUpdateList = async (updatedList: Lists) => {
+    if (!updatedList.id) return; // Ensure we don't try to update without an id
     setIsLoading(true);
     const listDoc = doc(db, 'lists', updatedList.id);
     await updateDoc(listDoc, {
@@ -98,10 +104,20 @@ const Dashboard = () => {
   };
 
   const handleAddList = async (newList: Lists) => {
-    if (!newList.title || !newList.description) return;
+    if (!newList.title || !newList.description) return; // Prevent adding incomplete lists
     setIsLoading(true);
-    const docRef = await addDoc(listsCollectionRef, newList);
-    setLists([...lists, { ...newList, id: docRef.id }]);
+
+    // Do not include id for new list; Firestore will generate it
+    const docRef = await addDoc(listsCollectionRef, {
+      title: newList.title,
+      description: newList.description,
+    });
+
+    // Now we can add the new list with the generated id
+    setLists([
+      ...lists,
+      { ...newList, id: docRef.id }, // Add the generated id to the list
+    ]);
     setIsLoading(false);
   };
 
@@ -169,8 +185,8 @@ const Dashboard = () => {
           currentList={selectedList}
           setCurrentList={setSelectedList}
           list={selectedList}
-          onSave={selectedList ? handleUpdateList : handleAddList}
-          onDelete={selectedList ? handleDeleteList : undefined}
+          onSave={selectedList.id ? handleUpdateList : handleAddList}
+          onDelete={selectedList.id ? handleDeleteList : undefined}
         />
       </div>
     </div>

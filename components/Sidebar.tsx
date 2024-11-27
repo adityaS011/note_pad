@@ -28,7 +28,7 @@ const Sidebar = () => {
     <div
       className={`transition-transform transform ${
         isCollapsed ? '-translate-x-full' : 'translate-x-0'
-      } fixed  z-10 w-screen md:w-64 bg-[#F1F2F7] h-full border `}
+      } fixed  z-10 w-screen md:w-64 bg-[#F1F2F7] h-screen  border `}
     >
       <div className='flex justify-between items-center h-14 px-4 border-b border-[#C8CBD9]'>
         <h2 className='font-bold text-lg'>Notes</h2>
@@ -47,12 +47,12 @@ const Sidebar = () => {
           >
             + Create
           </button>
-          <div className='flex flex-col gap-2'>
+          <div className='flex-grow overflow-y-auto gap-2 flex flex-col no-scrollbars'>
             <input
               placeholder='Search..'
               className='focus:outline-none border p-2 mx-4 rounded bg-slate-50 text-black'
             />
-            <div className='h-full overflow-y-auto'>
+            <div className='flex-grow min-h-0  no-scrollbars'>
               {lists.map((list) => (
                 <div
                   key={list.id}
@@ -63,13 +63,10 @@ const Sidebar = () => {
                       : 'hover:bg-[#c5cae9]'
                   }`}
                 >
-                  <div className='px-3 mr-2 ml-4 cursor-pointer border-b-[0.5px] py-3 border-[#cdcfda]'>
-                    <h3 className='font-bold text-xl opacity-80 truncate'>
+                  <div className='px-3  mr-2 ml-4 cursor-pointer  '>
+                    <h3 className='font-medium  opacity-80 border-b-[0.5px] pt-2 truncate border-[#cdcfda]  pb-1 '>
                       {list.title}
                     </h3>
-                    <p className='text-sm text-gray-600 truncate'>
-                      {list.description}
-                    </p>
                   </div>
                 </div>
               ))}
